@@ -5,13 +5,30 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     public float speed = 10f;
+    public float startHealth;
+    public GameObject deathVFX;
 
     private Transform target;
     private int wavepointIndex = 0;
+    private float enemyHealth;
 
     private void Start()
     {
         target = Waypoints.waypoints[0];
+        enemyHealth = startHealth;
+    }
+
+    public void TakeDamage(float amount)
+    {
+        enemyHealth -= amount;
+
+        if (enemyHealth <= 0)
+        {
+            GameObject effect = Instantiate(deathVFX, transform.position, transform.rotation);
+            Destroy(effect, 2f);
+
+            Destroy(gameObject);
+        }
     }
 
     void Update()
@@ -36,5 +53,7 @@ public class Enemy : MonoBehaviour
             target = Waypoints.waypoints[wavepointIndex];
         }
     }
+
+
 
 }
