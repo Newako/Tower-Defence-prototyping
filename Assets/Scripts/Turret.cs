@@ -5,18 +5,29 @@ using UnityEngine;
 public class Turret : MonoBehaviour
 {
     private Transform target;
+    private Enemy targetEnemy;
 
-    [Header("Attributes")]
+    [Header("General")]
 
     public float range = 15f;
+
+    [Header("Use Bullets (Default)")]
+    public GameObject bulletPrefab;
     public float fireRate = 1f;
     private float fireCountdown = 0f;
+
+    [Header("Use Laser")]
+    public bool useLaser = false;
+    public LineRenderer lineRenderer;
+
+    public int damageOverTime = 30;
+    public float slowAmount = .3f;
 
     [Header("Unity setup fields")]
 
     public string enemyTag = "Enemy";
 
-    public GameObject bulletPrefab;
+    
     public Transform firePoint;
 
     void Start()
@@ -43,6 +54,7 @@ public class Turret : MonoBehaviour
         if (nearestEnemy != null && shortestDistance <= range)
         {
             target = nearestEnemy.transform;
+            targetEnemy = nearestEnemy.GetComponent<Enemy>();
         }
         else
         {
@@ -54,16 +66,43 @@ public class Turret : MonoBehaviour
     {
         if (target == null)
         {
+            if(useLaser)
+            {
+                if(lineRenderer.enabled)
+                    lineRenderer.enabled = false;
+            }
+
             return;
         }
 
-        if (fireCountdown <= 0f)
+        if(useLaser)
         {
-            Shoot();
-            fireCountdown = 1f / fireRate;
+            Laser();
+        }
+        else
+        {
+            if (fireCountdown <= 0f)
+            {
+                Shoot();
+                fireCountdown = 1f / fireRate;
+            }
+
+            fireCountdown -= Time.deltaTime;
         }
 
-        fireCountdown -= Time.deltaTime;
+
+    }
+
+    void Laser()
+    {
+        targetEnemy.TakeDamage(damageOverTime * Time.deltaTime);
+        targetEnemy.Slow(slowAmount);
+
+        if (!lineRenderer.enabled)
+            lineRenderer.enabled = true;
+
+        lineRenderer.SetPosition(0, firePoint.position);
+        lineRenderer.SetPosition(1, target.position);
     }
 
     void Shoot ()

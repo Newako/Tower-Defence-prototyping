@@ -1,59 +1,61 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
-    public float speed = 10f;
-    public float startHealth;
+    public float startSpeed = 10f;
+
+    [HideInInspector]
+    public float speed;
+
+    public float startHealth = 100;
+    private float health;
+
+    public int value = 50;
     public GameObject deathVFX;
 
-    private Transform target;
-    private int wavepointIndex = 0;
-    private float enemyHealth;
+    [Header("Unity stuff")]
+    public Image healthBar;
 
-    private void Start()
+    private bool isDead = false;
+
+    void Start()
     {
-        target = Waypoints.waypoints[0];
-        enemyHealth = startHealth;
+        speed = startSpeed;  
+        health = startHealth;
     }
 
-    public void TakeDamage(float amount)
+    public void TakeDamage (float amount)
     {
-        enemyHealth -= amount;
+        health -= amount;
 
-        if (enemyHealth <= 0)
+        healthBar.fillAmount = health / startHealth;
+
+        if(health <= 0 & !isDead)
         {
-            GameObject effect = Instantiate(deathVFX, transform.position, transform.rotation);
-            Destroy(effect, 2f);
-
-            Destroy(gameObject);
+            Die();
         }
     }
 
-    void Update()
+    public void Slow(float pct)
     {
-        Vector3 dir = target.position - transform.position;
-        transform.Translate(dir.normalized * speed * Time.deltaTime, Space.World);
-
-        if (Vector3.Distance(transform.position, target.position) <= 0.2f)
-        {
-            GetNextWaypoint();
-        }
-
-        void GetNextWaypoint()
-        {
-            if (wavepointIndex >= Waypoints.waypoints.Length - 1)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
-            wavepointIndex++;
-            target = Waypoints.waypoints[wavepointIndex];
-        }
+        speed = startSpeed * (1f - pct);
     }
 
+    void Die()
+    {
+        isDead = true;
 
+        PlayerStats.Money += value;
+        Destroy(gameObject);
 
+        GameObject effect = Instantiate(deathVFX, transform.position, transform.rotation);
+        Destroy(effect, 2f);
+
+        WaveSpawner.EnemiesAlive--;
+
+        Destroy(gameObject);
+    }
 }

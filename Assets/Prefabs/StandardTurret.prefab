@@ -99,10 +99,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a33ab90d3265ba244b5d1d649efecf5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  range: 7.1
-  fireRate: 3
-  enemyTag: Enemy
+  range: 7
   bulletPrefab: {fileID: 5580101330768313982, guid: 1f03f543e9452394fb17277f4af736eb, type: 3}
+  fireRate: 2
+  useLaser: 0
+  lineRenderer: {fileID: 0}
+  damageOverTime: 30
+  slowAmount: 0.3
+  enemyTag: Enemy
   firePoint: {fileID: 8650047176700742446}
 --- !u!1 &8535284330068393605
 GameObject:

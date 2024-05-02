@@ -45,13 +45,25 @@ public class Bullet : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void Damage(Transform enemyLocation)
+    void Damage(Transform enemy)
     {
-        Enemy enemy = enemyLocation.GetComponent<Enemy>();
+        Enemy e = enemy.GetComponent<Enemy>();
 
-        if(enemy != null)
+        if (e != null)
         {
-            enemy.TakeDamage(damage);
+            e.TakeDamage(damage);
         }
     }
+
+    /*    void Damage(Transform enemyLocation)
+        {
+            Enemy e = enemy.GetComponent<Enemy>();
+
+            Enemy enemy = enemyLocation.GetComponent<Enemy>();
+
+            if(enemy != null)
+            {
+                enemy.TakeDamage(damage);
+            }
+        }*/
 }
